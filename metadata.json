@@ -1,0 +1,6 @@
+{
+  "name": "Data SocIAl - Inteligência e Dados para Impacto Social",
+  "description": "Plataforma de inteligência de dados sociais, governança MROSC, captação com incentivo fiscal e análise por IA com integração bidirecional em tempo real ao Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
