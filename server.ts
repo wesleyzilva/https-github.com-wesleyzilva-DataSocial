@@ -1,13 +1,11 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { google } from 'googleapis';
 import { MOCK_ONGS, MOCK_PROJECTS } from './src/mockData.js';
 import { ONG, Project, Investor } from './src/types.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentDirname = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
 
 const app = express();
 const PORT = 3000;

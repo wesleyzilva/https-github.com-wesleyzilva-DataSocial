@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, Github, Terminal, Copy, Check, ExternalLink, HelpCircle } from 'lucide-react';
+import { Download, Github, Terminal, Copy, Check, ExternalLink } from 'lucide-react';
 
 interface ExportGuideModalProps {
   isOpen: boolean;
@@ -11,12 +11,15 @@ export const ExportGuideModal: React.FC<ExportGuideModalProps> = ({ isOpen, onCl
 
   if (!isOpen) return null;
 
-  const gitCommands = `cd arandu-ong
+  const repoUrl = 'https://github.com/wesleyzilva/https-github.com-wesleyzilva-DataSocial.git';
+  const pagesUrl = 'https://wesleyzilva.github.io/https-github.com-wesleyzilva-DataSocial/';
+
+  const gitCommands = `cd https-github.com-wesleyzilva-DataSocial
 git init
 git add .
-git commit -m "feat: Arandu ONG / ONGanizator - Governança, Leis e Captação"
+git commit -m "feat: DataSocial - Governança, MROSC e Captação de Recursos"
 git branch -M main
-git remote add origin https://github.com/wesleyzilva/AranduONG.git
+git remote add origin ${repoUrl}
 git push -u origin main`;
 
   const ghPagesCommands = `npm run build
@@ -48,20 +51,25 @@ npx gh-pages -d dist`;
           </button>
         </div>
 
-        {/* Method 1: Download Snapshot ZIP directly in AI Studio */}
-        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-          <div className="flex items-center gap-2 text-slate-900 font-bold text-xs">
-            <Download className="w-4 h-4 text-indigo-600" />
-            <span>Opção 1: Download Direto do Código (Snapshot ZIP)</span>
+        {/* Method 1: Download Snapshot ZIP directly */}
+        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-xs">
+              <Download className="w-4 h-4 text-indigo-600" />
+              <span>Opção 1: Download Direto do Código (ZIP)</span>
+            </div>
+            <a
+              href="/DataSocial_Projeto_Completo.zip"
+              download="DataSocial_Projeto_Completo.zip"
+              className="flex items-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg shadow-xs transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Baixar ZIP do Projeto</span>
+            </a>
           </div>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Você pode baixar o código completo deste projeto diretamente na interface do <strong>Google AI Studio</strong>:
+            Você pode baixar o arquivo <strong>DataSocial_Projeto_Completo.zip</strong> pelo botão acima, ou usar o menu superior do AI Studio em <strong>Settings &gt; Export to ZIP</strong>.
           </p>
-          <ol className="text-xs text-slate-700 space-y-1.5 list-decimal list-inside pl-1 font-medium">
-            <li>No canto superior direito do AI Studio, clique no menu de três pontos <strong>(...)</strong> ou <strong>Settings</strong>.</li>
-            <li>Selecione a opção <strong>Export Project / Download Snapshot</strong> ou <strong>Export to ZIP</strong>.</li>
-            <li>O arquivo ZIP será baixado para o seu computador com todos os arquivos do monólito.</li>
-          </ol>
         </div>
 
         {/* Method 2: Push to GitHub */}
@@ -69,7 +77,7 @@ npx gh-pages -d dist`;
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 font-bold text-xs text-white font-sans">
               <Github className="w-4 h-4 text-indigo-400" />
-              <span>Opção 2: Enviar para o GitHub (Primeira Vez)</span>
+              <span>Opção 2: Enviar para o GitHub</span>
             </div>
             <button
               onClick={copyToClipboard}
@@ -89,24 +97,35 @@ npx gh-pages -d dist`;
           </pre>
 
           <p className="text-[10px] text-slate-400 font-sans">
-            * Repositório: <a href="https://github.com/wesleyzilva/AranduONG" target="_blank" rel="noreferrer" className="text-indigo-400 underline">github.com/wesleyzilva/AranduONG</a>
+            * Repositório: <a href="https://github.com/wesleyzilva/https-github.com-wesleyzilva-DataSocial" target="_blank" rel="noreferrer" className="text-indigo-400 underline">github.com/wesleyzilva/https-github.com-wesleyzilva-DataSocial</a>
           </p>
         </div>
 
         {/* Method 3: GitHub Pages Deployment */}
         <div className="p-4 rounded-xl bg-emerald-950 text-emerald-100 space-y-2.5 font-mono border border-emerald-800">
-          <div className="flex items-center gap-2 font-bold text-xs text-white font-sans">
-            <Github className="w-4 h-4 text-emerald-400" />
-            <span>Opção 3: Publicar no GitHub Pages (gh-pages)</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-bold text-xs text-white font-sans">
+              <Github className="w-4 h-4 text-emerald-400" />
+              <span>Opção 3: Publicar no GitHub Pages</span>
+            </div>
+            <a
+              href={pagesUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1 text-[10px] font-bold bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-2.5 py-1 rounded border border-emerald-600 transition-colors"
+            >
+              <span>Abrir App no Pages</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
           <p className="text-xs text-emerald-200 font-sans leading-relaxed">
-            Para publicar a aplicação estática no <strong>GitHub Pages</strong> (`https://wesleyzilva.github.io/AranduONG/`):
+            O repositório já conta com o workflow do GitHub Actions em <code className="text-amber-300">.github/workflows/deploy.yml</code>. A cada push na branch <code className="text-amber-300">main</code>, o deploy no Pages é automático!
           </p>
           <pre className="p-3 rounded-lg bg-slate-950 text-emerald-400 text-xs overflow-x-auto border border-emerald-900">
             {ghPagesCommands}
           </pre>
           <p className="text-[10px] text-emerald-300 font-sans">
-            * No repositório no GitHub, vá em <strong>Settings &gt; Pages</strong> e defina a Source para o branch <strong>gh-pages</strong> ou via GitHub Action. O `vite.config.ts` já possui `base: './'` configurado para compatibilidade total.
+            * Link oficial no Pages: <a href={pagesUrl} target="_blank" rel="noreferrer" className="text-amber-300 underline font-mono">{pagesUrl}</a>
           </p>
         </div>
 
@@ -139,3 +158,4 @@ npx gh-pages -d dist`;
     </div>
   );
 };
+
