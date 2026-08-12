@@ -181,7 +181,7 @@ export const GoogleSheetsIntegration: React.FC<GoogleSheetsIntegrationProps> = (
 
     setLoading(true);
     setError(null);
-    setStatusMessage('Enviando dados do Arandu para o Google Apps Script...');
+    setStatusMessage('Enviando dados do DataSocial para o Google Apps Script...');
 
     try {
       const payload = {
@@ -277,7 +277,7 @@ export const GoogleSheetsIntegration: React.FC<GoogleSheetsIntegrationProps> = (
     const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(BOM + [headers.join(';'), ...rows.map(e => e.join(';'))].join('\n'));
     const link = document.createElement('a');
     link.setAttribute('href', csvContent);
-    link.setAttribute('download', `Arandu_Relatorio_MROSC_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute('download', `DataSocial_Relatorio_MROSC_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

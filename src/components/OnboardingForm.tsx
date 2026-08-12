@@ -128,7 +128,7 @@ export const OnboardingForm: React.FC<OnboardingFormProps> = ({
               </span>
             </div>
             <p className="mt-1 text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">
-              Cadastre sua Organização da Sociedade Civil (OSC) para diagnosticar a regularidade jurídica, habilitar a captação via Leis de Incentivo (FIA, Rouanet, Esporte) e obter o <strong className="text-white font-semibold">Selo de Maturidade ONGanizator</strong>.
+              Cadastre sua Organização da Sociedade Civil (OSC) para diagnosticar a regularidade jurídica, habilitar a captação via Leis de Incentivo (FIA, Rouanet, Esporte) e obter o <strong className="text-white font-semibold">Selo de Maturidade DataSocial</strong>.
             </p>
           </div>
         </div>

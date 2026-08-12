@@ -213,16 +213,20 @@ export default function App() {
   };
 
   const handleRegisterSuccess = async (newOng: ONG) => {
-    const updatedOngs = [newOng, ...ongs];
+    const ongWithDate = {
+      ...newOng,
+      createdAt: newOng.createdAt || new Date().toISOString(),
+    };
+    const updatedOngs = [ongWithDate, ...ongs];
     setOngs(updatedOngs);
-    setActiveOng(newOng);
+    setActiveOng(ongWithDate);
     setActiveTab('maturity');
     setSyncBannerMsg(`🎉 ONG "${newOng.name}" cadastrada com sucesso! Sincronizando...`);
     try {
       await fetch('/api/ongs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newOng),
+        body: JSON.stringify(ongWithDate),
       });
     } catch (err) {
       console.warn('Error saving ONG to API:', err);
@@ -231,7 +235,11 @@ export default function App() {
   };
 
   const handleRegisterInvestorSuccess = async (newInvestor: Investor) => {
-    const updatedInvestors = [newInvestor, ...investors];
+    const invWithDate = {
+      ...newInvestor,
+      createdAt: newInvestor.createdAt || new Date().toISOString(),
+    };
+    const updatedInvestors = [invWithDate, ...investors];
     setInvestors(updatedInvestors);
     setActiveTab('investidor');
     setSyncBannerMsg(`🎉 Investidor "${newInvestor.name}" cadastrado com sucesso! Sincronizando...`);
@@ -239,7 +247,7 @@ export default function App() {
       await fetch('/api/investors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newInvestor),
+        body: JSON.stringify(invWithDate),
       });
     } catch (err) {
       console.warn('Error saving investor to API:', err);
@@ -295,14 +303,18 @@ export default function App() {
   };
 
   const handleAddProject = async (newProject: Project) => {
-    const updatedProjects = [newProject, ...projects];
+    const projectWithDate = {
+      ...newProject,
+      createdAt: (newProject as any).createdAt || new Date().toISOString(),
+    };
+    const updatedProjects = [projectWithDate, ...projects];
     setProjects(updatedProjects);
     setSyncBannerMsg(`🚀 Novo projeto "${newProject.title}" cadastrado com sucesso! Sincronizando...`);
     try {
       await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProject),
+        body: JSON.stringify(projectWithDate),
       });
     } catch (err) {
       console.warn('Error saving project to API:', err);
@@ -433,7 +445,7 @@ export default function App() {
             <FundacaoDashboard ongs={ongs} projects={projects} />
           )}
 
-          {/* Persona View 5: Admin Arandu */}
+          {/* Persona View 5: Admin DataSocial */}
           {activeTab === 'admin' && (
             <AdminDashboard ongs={ongs} projects={projects} />
           )}

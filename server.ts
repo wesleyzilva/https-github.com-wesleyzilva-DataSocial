@@ -61,7 +61,7 @@ let investorsStore: Investor[] = [
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    appName: 'Arandu Monolith API',
+    appName: 'DataSocial API',
     version: '1.0.0',
     ongsCount: ongsStore.length,
     projectsCount: projectsStore.length,
@@ -77,7 +77,7 @@ app.get('/api/auth/me', (req, res) => {
     user: {
       id: 'user-adv-1',
       name: 'Dra. Patricia Medeiros',
-      email: 'patricia.medeiros@arandu.org',
+      email: 'patricia.medeiros@datasocial.org.br',
       role: 'advogado',
       perspective: 'advogado',
     },
@@ -93,7 +93,7 @@ app.get('/api/auth/personas', (req, res) => {
       { id: 'ong', name: 'Instituto Esperança', role: 'Gestor da ONG', avatar: '🌱' },
       { id: 'investidor', name: 'Empresa Doadora Lucro Real', role: 'Financiador', avatar: '💼' },
       { id: 'fundacao', name: 'Fundação Impacto Social', role: 'Fundação Doadora', avatar: '🏛️' },
-      { id: 'admin', name: 'Administrador Arandu', role: 'Admin Plataforma', avatar: '🛡️' },
+      { id: 'admin', name: 'Administrador DataSocial', role: 'Admin Plataforma', avatar: '🛡️' },
     ],
   });
 });
@@ -196,7 +196,7 @@ app.get('/api/monitoring/audit-trail', (req, res) => {
     auditTrail: [
       { id: 'aud-1', timestamp: new Date().toISOString(), action: 'VALIDACAO_MROSC', actor: 'Dra. Patricia Medeiros', detail: 'Validação de certidões e estatuto do Instituto Esperança.' },
       { id: 'aud-2', timestamp: new Date(Date.now() - 3600000).toISOString(), action: 'CRIACAO_PROJETO', actor: 'Instituto Esperança', detail: 'Projeto "Escola de Música Jovem" cadastrado com ODS 4.' },
-      { id: 'aud-3', timestamp: new Date(Date.now() - 7200000).toISOString(), action: 'SINCRONIZACAO_SHEETS', actor: 'Sistema Arandu', detail: 'Sincronização de relatórios efetuada no Google Sheets.' },
+      { id: 'aud-3', timestamp: new Date(Date.now() - 7200000).toISOString(), action: 'SINCRONIZACAO_SHEETS', actor: 'Sistema DataSocial', detail: 'Sincronização de relatórios efetuada no Google Sheets.' },
     ],
   });
 });
@@ -218,7 +218,7 @@ app.get('/api/dashboard/stats', (req, res) => {
 app.get('/api/sheets/data', (req, res) => {
   res.json({
     success: true,
-    source: 'Arandu-Monolith-Store',
+    source: 'DataSocial-Monolith-Store',
     sheets: {
       ongs: ongsStore,
       projects: projectsStore,
@@ -439,7 +439,7 @@ app.post('/api/ai/diagnose', async (req, res) => {
           roadmap30Days: [
             'Elaborar o Regimento Interno e o Manual de Compras da Organização',
             'Apreciar as contas do último exercício com a Diretoria Executiva',
-            'Acessar o módulo de Selo Prata no ONGanizator',
+            'Acessar o módulo de Selo Prata no DataSocial',
           ],
           roadmap60Days: [
             'Publicar a Prestação de Contas no Portal de Transparência',
@@ -777,7 +777,7 @@ app.post('/api/sheets/sync', async (req, res) => {
       const sheetInfo = await sheets.spreadsheets.get({ spreadsheetId });
       const existingSheetTitles = (sheetInfo.data.sheets || []).map(s => s.properties?.title || '');
       console.log(`[SERVER SYNC ${reqTime}] Existing tabs in spreadsheet:`, existingSheetTitles);
-      const requiredTabs = ['ONGs Cadastradas', 'Projetos e Captação', 'Investidores e Patrocinadores', 'Resumo Governança'];
+      const requiredTabs = ['ONGs Cadastradas', 'Projetos e Captação', 'Investidores e Patrocinadores', 'Resumo Governança', 'Trilha de Auditoria'];
       const addSheetRequests = requiredTabs
         .filter(tab => !existingSheetTitles.includes(tab))
         .map(tab => ({ addSheet: { properties: { title: tab } } }));
@@ -808,13 +808,21 @@ app.post('/api/sheets/sync', async (req, res) => {
 
     console.log(`[SERVER SYNC ${reqTime}] Syncing data counts: ONGs=${ongsStore.length}, Projects=${projectsStore.length}, Investors=${investorsStore.length}`);
 
-    // Populate ONGs
+    const nowBRT = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+    // Populate ONGs with Sequential ID and Audit Timestamp
     const ongHeaders = [
-      'ID', 'Nome da ONG', 'CNPJ', 'Área de Atuação', 'Cidade', 'UF', 'Selo de Maturidade', 'Score Governança', 'Beneficiários Ativos', 'Captação Total (R$)'
+      'Nº Sequencial', 'ID do Registro', 'Nome da ONG', 'CNPJ', 'Área de Atuação', 'Cidade', 'UF', 'Selo de Maturidade', 'Score Governança', 'Beneficiários Ativos', 'Captação Total (R$)', 'Data/Hora de Registro (Auditável)'
     ];
-    const ongRows = ongsStore.map(o => [
-      o.id, o.name, o.cnpj, o.areaAtuacao, o.city, o.state, o.maturityLevel, o.governanceScore, o.activeBeneficiariesCount, o.totalRaisedR$
-    ]);
+    const ongRows = ongsStore.map((o, idx) => {
+      const seqId = `#ONG-${String(idx + 1).padStart(3, '0')}`;
+      const dateStr = o.createdAt
+        ? new Date(o.createdAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+        : nowBRT;
+      return [
+        seqId, o.id, o.name, o.cnpj, o.areaAtuacao, o.city, o.state, o.maturityLevel, o.governanceScore, o.activeBeneficiariesCount, o.totalRaisedR$, dateStr
+      ];
+    });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId,
@@ -824,13 +832,19 @@ app.post('/api/sheets/sync', async (req, res) => {
     });
     console.log(`[SERVER SYNC ${reqTime}] 'ONGs Cadastradas' updated (${ongRows.length} rows).`);
 
-    // Populate Projects
+    // Populate Projects with Sequential ID and Audit Timestamp
     const projHeaders = [
-      'ID', 'Título do Projeto', 'ONG Responsável', 'Mecanismo Fiscal', 'Meta (R$)', 'Captado (R$)', 'Status', 'Beneficiários Impactados'
+      'Nº Sequencial', 'ID do Registro', 'Título do Projeto', 'ONG Responsável', 'Mecanismo Fiscal', 'Meta (R$)', 'Captado (R$)', 'Status', 'Beneficiários Impactados', 'Data/Hora de Registro (Auditável)'
     ];
-    const projRows = projectsStore.map(p => [
-      p.id, p.title, p.ongName, p.mecanismo, p.targetAmountR$, p.raisedAmountR$, p.status, p.beneficiariesCount
-    ]);
+    const projRows = projectsStore.map((p, idx) => {
+      const seqId = `#PROJ-${String(idx + 1).padStart(3, '0')}`;
+      const dateStr = (p as any).createdAt
+        ? new Date((p as any).createdAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+        : (p.startDate ? new Date(p.startDate).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }) : nowBRT);
+      return [
+        seqId, p.id, p.title, p.ongName, p.mecanismo, p.targetAmountR$, p.raisedAmountR$, p.status, p.beneficiariesCount, dateStr
+      ];
+    });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId,
@@ -840,13 +854,19 @@ app.post('/api/sheets/sync', async (req, res) => {
     });
     console.log(`[SERVER SYNC ${reqTime}] 'Projetos e Captação' updated (${projRows.length} rows).`);
 
-    // Populate Investors / Sponsors
+    // Populate Investors / Sponsors with Sequential ID and Audit Timestamp
     const invHeaders = [
-      'ID', 'Empresa / Investidor Social', 'CNPJ', 'Orçamento Dedutível (R$)', 'Áreas de Interesse', 'Leis de Incentivo Preferenciais', 'Pessoa de Contato', 'E-mail'
+      'Nº Sequencial', 'ID do Registro', 'Empresa / Investidor Social', 'CNPJ', 'Orçamento Dedutível (R$)', 'Áreas de Interesse', 'Leis de Incentivo Preferenciais', 'Pessoa de Contato', 'E-mail', 'Data/Hora de Registro (Auditável)'
     ];
-    const invRows = investorsStore.map(i => [
-      i.id, i.name, i.cnpj || '', i.totalDeductibleBudgetR$, (i.preferredAreas || []).join(', '), (i.preferredIncentiveLaws || []).join(', '), i.contactPerson || '', i.email || ''
-    ]);
+    const invRows = investorsStore.map((i, idx) => {
+      const seqId = `#INV-${String(idx + 1).padStart(3, '0')}`;
+      const dateStr = i.createdAt
+        ? new Date(i.createdAt).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+        : nowBRT;
+      return [
+        seqId, i.id, i.name, i.cnpj || '', i.totalDeductibleBudgetR$, (i.preferredAreas || []).join(', '), (i.preferredIncentiveLaws || []).join(', '), i.contactPerson || '', i.email || '', dateStr
+      ];
+    });
 
     await sheets.spreadsheets.values.update({
       spreadsheetId,
@@ -857,14 +877,14 @@ app.post('/api/sheets/sync', async (req, res) => {
     console.log(`[SERVER SYNC ${reqTime}] 'Investidores e Patrocinadores' updated (${invRows.length} rows).`);
 
     // Populate Resumo
-    const summaryHeaders = ['Indicador MROSC', 'Valor Atual', 'Observação de Governança'];
+    const summaryHeaders = ['Nº Sequencial', 'Indicador MROSC', 'Valor Atual', 'Observação de Governança', 'Última Atualização Auditada'];
     const summaryRows = [
-      ['Total de ONGs Validadas', ongsStore.length, 'Organizações da Sociedade Civil cadastradas'],
-      ['Selo Ouro de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Ouro').length, 'Conformidade MROSC avançada e auditoria'],
-      ['Selo Prata de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Prata').length, 'Transparência ativa e regimento'],
-      ['Selo Bronze de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Bronze').length, 'Estatuto social e CNDs regulares'],
-      ['Projetos de Captação Ativos', projectsStore.length, 'Aptos para Leis de Incentivo (FIA, Rouanet, PIX)'],
-      ['Volume Total Captado (R$)', projectsStore.reduce((acc, p) => acc + p.raisedAmountR$, 0), 'Recursos direcionados para impacto social'],
+      ['#RES-001', 'Total de ONGs Validadas', ongsStore.length, 'Organizações da Sociedade Civil cadastradas', nowBRT],
+      ['#RES-002', 'Selo Ouro de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Ouro').length, 'Conformidade MROSC avançada e auditoria', nowBRT],
+      ['#RES-003', 'Selo Prata de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Prata').length, 'Transparência ativa e regimento', nowBRT],
+      ['#RES-004', 'Selo Bronze de Maturidade', ongsStore.filter(o => o.maturityLevel === 'Bronze').length, 'Estatuto social e CNDs regulares', nowBRT],
+      ['#RES-005', 'Projetos de Captação Ativos', projectsStore.length, 'Aptos para Leis de Incentivo (FIA, Rouanet, PIX)', nowBRT],
+      ['#RES-006', 'Volume Total Captado (R$)', projectsStore.reduce((acc, p) => acc + p.raisedAmountR$, 0), 'Recursos direcionados para impacto social', nowBRT],
     ];
 
     await sheets.spreadsheets.values.update({
@@ -874,6 +894,51 @@ app.post('/api/sheets/sync', async (req, res) => {
       requestBody: { values: [summaryHeaders, ...summaryRows] },
     });
     console.log(`[SERVER SYNC ${reqTime}] 'Resumo Governança' updated.`);
+
+    // Populate or Append to Trilha de Auditoria
+    try {
+      const auditHeaders = ['ID Sequencial Audit', 'Data e Hora (Horário de Brasília)', 'Tipo de Operação', 'Totais Processados', 'Status MROSC & Integridade'];
+      let existingAuditRows: any[] = [];
+      try {
+        const auditSheet = await sheets.spreadsheets.values.get({
+          spreadsheetId,
+          range: "'Trilha de Auditoria'!A:E",
+        });
+        existingAuditRows = auditSheet.data.values || [];
+      } catch (e) {
+        existingAuditRows = [];
+      }
+
+      const seqNumber = existingAuditRows.length > 0 ? existingAuditRows.length : 1;
+      const auditSeqId = `#AUD-${String(seqNumber).padStart(4, '0')}`;
+      const newAuditRow = [
+        auditSeqId,
+        nowBRT,
+        'Sincronização & Salvamento MROSC',
+        `${ongsStore.length} ONGs, ${projectsStore.length} Projetos, ${investorsStore.length} Investidores`,
+        'Autenticado e Auditado pelo DataSocial'
+      ];
+
+      if (existingAuditRows.length === 0) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range: "'Trilha de Auditoria'!A1",
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values: [auditHeaders, newAuditRow] },
+        });
+      } else {
+        await sheets.spreadsheets.values.append({
+          spreadsheetId,
+          range: "'Trilha de Auditoria'!A1",
+          valueInputOption: 'USER_ENTERED',
+          insertDataOption: 'INSERT_ROWS',
+          requestBody: { values: [newAuditRow] },
+        });
+      }
+      console.log(`[SERVER SYNC ${reqTime}] 'Trilha de Auditoria' recorded event ${auditSeqId}.`);
+    } catch (auditErr: any) {
+      console.warn(`[SERVER SYNC ${reqTime}] Trilha de Auditoria logging warning:`, auditErr?.message || auditErr);
+    }
 
     const folderUrl = `https://drive.google.com/drive/u/0/folders/${folderId}`;
 

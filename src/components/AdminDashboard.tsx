@@ -56,7 +56,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ ongs, projects }
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5 max-w-2xl leading-relaxed">
-                Supervisão geral do ecossistema Arandu, matriz de permissões por perfil, logs de auditoria e personalização de marca White-label.
+                Supervisão geral do ecossistema DataSocial, matriz de permissões por perfil, logs de auditoria e personalização de marca White-label.
               </p>
             </div>
           </div>
@@ -227,7 +227,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ ongs, projects }
                 onChange={e => setPrimaryColor(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs bg-white outline-none"
               >
-                <option value="Emerald (Esmeralda)">Emerald (Verde Arandu)</option>
+                <option value="Emerald (Esmeralda)">Emerald (Verde DataSocial)</option>
                 <option value="Indigo">Indigo / Azul Real</option>
                 <option value="Amber">Amber / Dourado</option>
               </select>

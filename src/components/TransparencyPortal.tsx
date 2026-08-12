@@ -58,7 +58,7 @@ export const TransparencyPortal: React.FC<TransparencyPortalProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-0.5 max-w-2xl leading-relaxed">
-              Consulte organizações da sociedade civil validadas pelo <strong className="text-white font-semibold">ONGanizator</strong>. Acompanhe relatórios de governança, regularidade MROSC e indicadores de impacto.
+              Consulte organizações da sociedade civil validadas pelo <strong className="text-white font-semibold">DataSocial</strong>. Acompanhe relatórios de governança, regularidade MROSC e indicadores de impacto.
             </p>
           </div>
         </div>

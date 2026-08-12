@@ -108,7 +108,7 @@ export const AiDiagnostic: React.FC<AiDiagnosticProps> = ({
           ],
           roadmap30Days: [
             'Aprovar e publicar o Regimento Interno no site da instituição',
-            'Sincronizar balancete atualizado no portal do ONGanizator',
+            'Sincronizar balancete atualizado no portal do DataSocial',
             'Elaborar o primeiro edital para chamamento de pareceristas contábeis',
           ],
           roadmap60Days: [

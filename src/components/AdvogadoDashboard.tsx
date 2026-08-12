@@ -90,7 +90,7 @@ export const AdvogadoDashboard: React.FC<AdvogadoDashboardProps> = ({ ongs, proj
   // Split calculation state
   const [splitProjectValue, setSplitProjectValue] = useState<number>(250000);
   const [lawFeePercent, setLawyerFeePercent] = useState<number>(6); // 6% para o advogado captador
-  const [platformFeePercent, setPlatformFeePercent] = useState<number>(2); // 2% para Arandu
+  const [platformFeePercent, setPlatformFeePercent] = useState<number>(2); // 2% para DataSocial
   const [accountantFeePercent, setAccountantFeePercent] = useState<number>(1); // 1% para prestação de contas
 
   const lawyerAmount = (splitProjectValue * lawFeePercent) / 100;
@@ -368,7 +368,7 @@ export const AdvogadoDashboard: React.FC<AdvogadoDashboardProps> = ({ ongs, proj
                 <span>Calculadora Transparente de Split de Intermediação</span>
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Conforme diretrizes do backlog Arandu (13.4): o advogado de captação origina o negócio e retém honorários transparentes com repasse direto via gateway de pagamentos.
+                Conforme diretrizes de governança (13.4): o advogado de captação origina o negócio e retém honorários transparentes com repasse direto via gateway de pagamentos.
               </p>
             </div>
           </div>
@@ -403,7 +403,7 @@ export const AdvogadoDashboard: React.FC<AdvogadoDashboardProps> = ({ ongs, proj
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                    Plataforma Arandu (%)
+                    Plataforma DataSocial (%)
                   </label>
                   <input
                     type="number"
@@ -440,7 +440,7 @@ export const AdvogadoDashboard: React.FC<AdvogadoDashboardProps> = ({ ongs, proj
               </div>
 
               <div className="flex justify-between items-center bg-indigo-50 p-2.5 rounded border border-indigo-200 font-bold text-indigo-900">
-                <span>Plataforma Arandu ({platformFeePercent}%):</span>
+                <span>Plataforma DataSocial ({platformFeePercent}%):</span>
                 <span>R$ {platformAmount.toLocaleString('pt-BR')}</span>
               </div>
 
